@@ -323,14 +323,16 @@ namespace AudioLink
 
     // Records everything this computer plays. Sound drivers differ, so there are three ways to do it,
     // tried in turn until one works:
+    //   2. Windows 10 2004+/11 "process loopback": every app's sound except AudioLink's own. Tried first,
+    //      because AudioLink plays the PC's microphone into VB-Cable on the laptop; recording the output
+    //      device instead would pick that up and send your own voice back to your headphones.
     //   0. standard loopback of the default output device in its own format
     //   1. the same, but asking Windows to convert to plain 48 kHz stereo
-    //   2. Windows 10 2004+/11 "process loopback": all apps' sound, bypassing the output driver entirely
     class LoopbackSource : IDisposable
     {
         public static readonly string[] MethodNames = { "standard", "converted", "all-apps" };
         public static int OnlyMethod = -1;      // for testing
-        static int preferred;
+        static int preferred = 2;
 
         public IAudioClient Client;
         public IAudioCaptureClient Capture;

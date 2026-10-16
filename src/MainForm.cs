@@ -44,7 +44,7 @@ namespace AudioLink
         StatusPill pill;
         ModeCard pcCard, laptopCard;
         Label hdrLayout, hdrConn, hdrShare, myAddr, volLabel, hint, firewallText;
-        Panel layoutSec, connSec, shareSec, optionsSec, firewallSec;
+        Panel layoutSec, connSec, shareSec, optionsSec, firewallSec, cableWarnSec;
         LayoutCanvas canvas;
         TextBox pcCodeBox, lapCodeBox;
         ComboBox hostBox, switchBox;
@@ -192,7 +192,10 @@ namespace AudioLink
             cableLink.LinkClicked += delegate { try { Process.Start("https://vb-audio.com/Cable/"); } catch { } };
             tips.SetToolTip(cableLink, "A free virtual microphone for Windows. Once it's installed, AudioLink picks it automatically.");
             micDeviceBox.DropDown += delegate { RefreshMicDevices(); };
-            Activated += delegate { if (role == "laptop") RefreshMicDevices(); };
+            Activated += delegate { if (role == "laptop") { RefreshMicDevices(); UpdateCableWarning(); } };
+            var deviceCheck = new System.Windows.Forms.Timer { Interval = 3000 };
+            deviceCheck.Tick += delegate { if (Visible) UpdateCableWarning(); };
+            deviceCheck.Start();
 
             volLabel = Muted("Laptop volume", 18, 132);
             volume = new TrackBar { Minimum = 0, Maximum = 150, TickStyle = TickStyle.None, Location = new Point(120, 126), Size = new Size(260, 30) };
@@ -227,6 +230,19 @@ namespace AudioLink
             firewallBtn.Click += delegate { AllowThroughFirewall(); };
             firewallSec.Controls.AddRange(new Control[] { firewallText, firewallBtn });
             flow.Controls.Add(firewallSec);
+
+            // Laptop: VB-Cable set as the default speaker (Windows often does this when it's installed)
+            cableWarnSec = new Card { Size = new Size(W, 60), Margin = new Padding(0, 0, 0, 12), Fill = Theme.WarnBack, Visible = false };
+            var cableWarnText = new Label
+            {
+                Text = "This laptop's default speaker is \"CABLE Input\", so apps play into the virtual microphone and you'll hear echoes. Set your real speakers as the default.",
+                Location = new Point(12, 8), Size = new Size(W - 150, 46), ForeColor = Theme.Text, BackColor = Theme.WarnBack
+            };
+            var soundSettingsBtn = Theme.PrimaryButton("Sound settings");
+            soundSettingsBtn.SetBounds(W - 130, 16, 118, 28);
+            soundSettingsBtn.Click += delegate { try { Process.Start("ms-settings:sound"); } catch { } };
+            cableWarnSec.Controls.AddRange(new Control[] { cableWarnText, soundSettingsBtn });
+            flow.Controls.Add(cableWarnSec);
 
             // Start / autostart / log
             var actions = Section(40);
@@ -403,8 +419,21 @@ namespace AudioLink
             volLabel.Visible = volume.Visible = pc;
             shareSec.Height = pc ? 158 : 134;
             UpdateFirewallUi();
+            UpdateCableWarning();
             UpdateHint();
             ResumeLayout(true);
+        }
+
+        // Laptop only: is the virtual cable the default speaker?
+        void UpdateCableWarning()
+        {
+            bool show = false;
+            if (role == "laptop")
+            {
+                string def = Devices.DefaultName(0) ?? "";
+                show = def.IndexOf("CABLE", StringComparison.OrdinalIgnoreCase) >= 0 || def.IndexOf("VB-Audio", StringComparison.OrdinalIgnoreCase) >= 0;
+            }
+            if (cableWarnSec.Visible != show) cableWarnSec.Visible = show;
         }
 
         static List<Devices.Info> SafeOutputs()
