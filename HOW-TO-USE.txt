@@ -1,0 +1,79 @@
+AudioLink - one keyboard, mouse, headphones and clipboard for your PC and laptop
+================================================================================
+
+What it does
+  - Sound: everything the laptop plays comes out of the PC's headphones.
+  - Keyboard & mouse: move the mouse off the edge of the PC screen and it carries on
+    onto the laptop screen; the keyboard types on the laptop. Move back to return.
+    Scroll Lock also jumps between the two.
+  - Clipboard: copy text or a picture on one computer, paste it on the other.
+  Everything stays on your home network. Keyboard, mouse and clipboard are encrypted
+  with a pairing code, so nobody else on the Wi-Fi can read your typing.
+
+Nothing to install. Both computers need Windows and the same Wi-Fi/home network.
+
+
+SETUP (once)
+------------
+1. On the PC (the one with the keyboard, mouse and headphones):
+   - Open AudioLink.exe
+   - Click the "Main PC" card.
+   - Note the pairing code, and drag the laptop picture to the side of your screen where it sits.
+   - Tick "Start with Windows". AudioLink installs itself and reopens.
+   - Click "Start". When Windows asks about the firewall: tick Private networks, click Allow.
+
+2. Copy AudioLink.exe to the laptop (USB stick, OneDrive, email ...).
+
+3. On the laptop:
+   - Open AudioLink.exe (if SmartScreen warns: More info -> Run anyway).
+   - Click the "Laptop" card.
+   - Click "Find PC" (or type the PC's address), and type the pairing code from the PC.
+   - Tick "Start with Windows". AudioLink installs itself and reopens.
+   - Click "Start".
+   - Turn the laptop's own volume down so it doesn't also play out loud.
+
+From then on, both start by themselves when Windows starts and sit in the system tray
+(the little blue icon near the clock). Double-click it to open the settings.
+Changes apply straight away - no need to stop first.
+More options (main PC): switch only after a short pause or a double tap at the edge,
+and ignore the screen corners so Close buttons stay easy to hit.
+"View log" shows what AudioLink is doing if something goes wrong.
+To quit: right-click the tray icon -> Exit.
+To stop it starting with Windows: untick the box.
+
+
+USING THE PC'S MICROPHONE ON THE LAPTOP
+---------------------------------------
+Apps on the laptop (Discord, Teams, Zoom ...) can only pick a microphone that a sound driver
+provides, so the laptop needs the free VB-Cable virtual microphone:
+1. On the laptop, install VB-Cable from https://vb-audio.com/Cable/ (download, unzip, right-click
+   VBCABLE_Setup_x64.exe -> Run as administrator -> Install Driver, then restart the laptop).
+2. On the PC: tick "Microphone - let the laptop use this PC's microphone".
+3. On the laptop: tick "Microphone - use the main PC's microphone on this laptop".
+   "Play it into" should show "CABLE Input" (picked automatically).
+4. In your apps on the laptop, choose "CABLE Output" as the microphone.
+The PC shares its default Windows microphone, and only turns it on while the laptop is connected
+(you'll see the usual microphone-in-use icon on the PC then). It's encrypted with the pairing code.
+
+
+GOOD TO KNOW
+------------
+- The laptop's login/lock screen and "Do you want to allow changes?" (admin) prompts can't be
+  controlled from the PC - Windows blocks that for security. Use the laptop's own keyboard
+  for those. Same for windows running as administrator on the laptop (e.g. Task Manager).
+- Ctrl+Alt+Del always goes to the PC.
+- Clipboard shares text and pictures, not files.
+- Sound delay is about 50-100 ms: fine for video, music and calls.
+- Updating: open the new AudioLink.exe; it asks to replace the installed copy.
+
+
+TROUBLESHOOTING
+---------------
+- Laptop says "no answer": make sure AudioLink is running on the PC, and both are on the same
+  network. If you pressed Cancel on the firewall popup, search Start for
+  "Allow an app through Windows Firewall" and tick AudioLink for Private.
+- PC's network set to "Public"? Change it to Private in Settings > Network & internet.
+- "Pairing code doesn't match": retype the code shown on the PC into the laptop.
+- Mouse goes to the laptop on the wrong side: change "The laptop sits ..." on the PC.
+- Sound stutters: Ethernet or 5 GHz Wi-Fi helps.
+- Log file for diagnosing problems: %TEMP%\AudioLink.log
